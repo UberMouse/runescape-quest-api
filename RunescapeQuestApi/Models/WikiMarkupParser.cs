@@ -1,14 +1,12 @@
 ﻿using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using AngleSharp.Dom;
 using AngleSharp.Dom.Html;
-using AngleSharp.Parser.Html;
 using static AngleSharp.Dom.NodeType;
 
 namespace RunescapeQuestApi.Models
 {
-    public enum NodeType { Text, Page, List }
+    public enum NodeType { Text, Page, List, Group }
 
     public interface IWikiNode
     {

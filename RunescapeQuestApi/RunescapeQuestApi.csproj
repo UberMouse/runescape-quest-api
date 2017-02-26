@@ -165,6 +165,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\GroupNode.cs" />
     <Compile Include="Models\ListNode.cs" />
     <Compile Include="Models\PageNode.cs" />
     <Compile Include="Models\Quest.cs" />

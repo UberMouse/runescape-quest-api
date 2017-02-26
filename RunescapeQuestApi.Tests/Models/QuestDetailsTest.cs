@@ -23,7 +23,7 @@ namespace RunescapeQuestApi.Tests.Models
         }
 
         [Fact]
-        public void QuestDetailsStartPointWorks()
+        public void StartPointReturnsAListOfNodesForTheStartPoint()
         {
             var expected = new List<IWikiNode>
             {
@@ -33,6 +33,48 @@ namespace RunescapeQuestApi.Tests.Models
                 new PageNode("Keldagrim Palace", "/wiki/Keldagrim_Palace")
             };
             var result = _subject.StartPoint();
+
+            Assert.Equal(
+                expected,
+                result
+            );
+        }
+
+        [Fact]
+        public void MembersReturnsTrueWhenTheQuestIsMembersOnly()
+        {
+            var expected = true;
+            var result = _subject.Members();
+
+            Assert.Equal(
+                expected,
+                result
+            );
+        }
+
+        [Fact]
+        public void DifficultyReturnsAListOfNodesForDifficulty()
+        {
+            var expected = new List<IWikiNode>
+            {
+                new TextNode("Grandmaster")
+            };
+            var result = _subject.Difficulty();
+
+            Assert.Equal(
+                expected,
+                result
+            );
+        }
+
+        [Fact]
+        public void LengthReturnsAListOfNodesForLength()
+        {
+            var expected = new List<IWikiNode>
+            {
+                new TextNode("Long (1-2 hours)")
+            };
+            var result = _subject.Length();
 
             Assert.Equal(
                 expected,

@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Threading.Tasks;
 using System.Web.Http;
+using RunescapeQuestApi.Services;
 
 namespace RunescapeQuestApi.Controllers
 {
@@ -12,6 +14,9 @@ namespace RunescapeQuestApi.Controllers
         // GET api/values
         public IEnumerable<string> Get()
         {
+            //            var quest = await new QuestLoader().LoadQuest("Beneath_Cursed_Tides");
+            //            var requirements = quest.Requirements();
+
             return new string[] { "value1", "value2" };
         }
 

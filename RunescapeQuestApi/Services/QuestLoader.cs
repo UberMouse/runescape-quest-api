@@ -1,12 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using System.Web.WebSockets;
 using AngleSharp;
 using AngleSharp.Dom;
+using AngleSharp.Dom.Css;
 using AngleSharp.Dom.Html;
+using AngleSharp.Html;
 using RunescapeQuestApi.Models;
 using WebGrease.Css.Extensions;
 
@@ -31,10 +34,100 @@ namespace RunescapeQuestApi.Services
 
         private readonly Dictionary<string, Func<IHtmlElement, IEnumerable<IWikiNode>>> _sectionParseStrategies = new Dictionary<string, Func<IHtmlElement, IEnumerable<IWikiNode>>>()
         {
-            {"Difficulty",  element => new List<IWikiNode>() { new TextNode(element.TextContent) }},
-            {"Length",  element => new List<IWikiNode>() { new TextNode(element.TextContent) }},
-            {"QuestRequirements", QuestRequirements}
+            {"Difficulty", GroupParser},
+            {"Length",  GroupParser},
+            {"QuestRequirements", QuestRequirements},
+            {"SkillRequirements", SkillRequirements},
+            {"ItemsNeededAtStart", ListParser},
+            {"ItemsNeededToComplete", ListParser},
+            {"ItemsRecommended", ListParser },
+            {"QuestPoints", GroupParser},
+            {"Reward", ListParser},
+            {"StartPoint", GroupParser},
+            {"ToStart", GroupParser}
         };
+
+        private static IEnumerable<IWikiNode> GroupParser(IHtmlElement element)
+        {
+            return new List<IWikiNode>()
+            {
+                new GroupNode(
+                    element.ChildNodes.Select<INode, IWikiNode>(node =>
+                    {
+                        var anchorNode = node as IHtmlAnchorElement;
+                        if (anchorNode != null)
+                            return new PageNode(anchorNode.Text, anchorNode.Href);
+
+                        return new TextNode(node.TextContent.Trim());
+                    }).ToArray()    
+                )
+            };
+        }
+
+        private static IEnumerable<IWikiNode> ListParser(IHtmlElement element)
+        {
+            var textCleanupActions = new List<Func<string, string>>()
+            {
+                text =>
+                {
+                    if (text.StartsWith("and", StringComparison.CurrentCultureIgnoreCase))
+                        return text.TrimStart('a', 'n', 'd').Trim();
+                    return text;
+                },
+                text => text.First().ToString().ToUpper() + text.Substring(1)
+            };
+
+            var content = element.TextContent;
+            var textNodes = content
+                .Split(',')
+                .Select(item => item.Trim())
+                .Select(item => new TextNode(textCleanupActions.Aggregate(item, (text, transform) => transform(text))))
+                .OfType<IWikiNode>()
+                .ToList();
+
+            return new List<IWikiNode>()
+            {
+                new ListNode(textNodes)
+            };
+        }
+
+        private static IEnumerable<IWikiNode> SkillRequirements(IHtmlElement element)
+        {
+            var skillNodes = Split(
+                element
+                    .ChildNodes
+                    .Where(node =>
+                    {
+                        var castNode = node as IHtmlElement;
+                        // Free floating text is not part of the DOM namespace so it won't cast
+                        if (castNode == null)
+                            return true;
+
+                        return castNode.TagName != "BR";
+                    }),
+                size: 2
+            );
+
+            return new List<IWikiNode>()
+            {
+                new ListNode(
+                    skillNodes
+                        .Where(group => group.Count() == 2)
+                        // All legitimate groups will be a TextNode and HtmlAnchorElement, this filters out the junk ones
+                        .Select(group =>
+                        {
+                            var elements = group.ToList();
+
+                            return new {Text = elements.First(), Anchor = (IHtmlAnchorElement) elements.Last()};
+                        }).Select(group => new GroupNode(
+                            new TextNode(group.Text.TextContent.Trim()),
+                            new PageNode(group.Anchor.Text, group.Anchor.Href)
+                        ))
+                        .OfType<IWikiNode>()
+                        .ToList()
+               )
+            };
+        }
 
         private static IEnumerable<IWikiNode> QuestRequirements(IHtmlElement element)
         {
@@ -43,7 +136,7 @@ namespace RunescapeQuestApi.Services
                 .OfType<IHtmlElement>()
                 .Where(node => node.LocalName == "a")
                 .OfType<IHtmlAnchorElement>()
-                .Select(node => new PageNode(node.TextContent, node.Href));
+                .Select(node => new PageNode(node.TextContent.Trim(), node.Href));
 
             return new List<IWikiNode>()
             {
@@ -68,7 +161,7 @@ namespace RunescapeQuestApi.Services
             var questProperties = quest.GetType()
                                        .GetProperties()
                                        .ToDictionary(pi => pi.Name);
-            Split<IHtmlElement>(
+            Split(
                 questContent.ChildNodes.OfType<IHtmlElement>(), 
                 size: 2
             ).Select(group =>
@@ -94,12 +187,13 @@ namespace RunescapeQuestApi.Services
         /// <summary>
         /// Splits an array into several smaller arrays.
         /// </summary>
-        /// <typeparam name="T">The type of the array.</typeparam>
-        /// <param name="array">The array to split.</param>
+        /// <typeparam name="T">The type of the enumerable.</typeparam>
+        /// <param name="enumerable">The enumerable to split.</param>
         /// <param name="size">The size of the smaller arrays.</param>
         /// <returns>An array containing smaller arrays.</returns>
-        private IEnumerable<IEnumerable<T>> Split<T>(IEnumerable<T> array, int size)
+        private static IEnumerable<IEnumerable<T>> Split<T>(IEnumerable<T> enumerable, int size)
         {
+            var array = enumerable as T[] ?? enumerable.ToArray();
             for (var i = 0; i < (float)array.Count() / size; i++)
             {
                 yield return array.Skip(i * size).Take(size);

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace RunescapeQuestApi.Models
 {
@@ -23,7 +24,7 @@ namespace RunescapeQuestApi.Models
 
         protected bool Equals(ListNode other)
         {
-            return _children.Equals(other._children);
+            return _children.SequenceEqual(other._children);
         }
 
         public override bool Equals(object obj)

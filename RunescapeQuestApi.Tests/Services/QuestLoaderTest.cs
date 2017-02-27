@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using AngleSharp.Dom.Css;
 using RunescapeQuestApi.Models;
@@ -7,114 +8,76 @@ using Xunit;
 
 namespace RunescapeQuestApi.Tests.Services
 {
-    public class QuestLoaderTest
+    public class QuestLoaderTest : IClassFixture<QuestFixture>
     {
-        [Fact]
-        public async Task CanLoadQuest()
+        internal Quest _quest = new Quest()
         {
-            var expected = new Quest()
-            {
-                Difficulty = new List<IWikiNode>() {new TextNode("Intermediate")},
-                Length = new List<IWikiNode>() { new TextNode("Short")},
-                QuestRequirements = new List<IWikiNode>()
+            Difficulty = new List<IWikiNode>() { new GroupNode(new TextNode("Intermediate")) },
+            Length = new List<IWikiNode>() { new GroupNode(new TextNode("Medium")) },
+            QuestRequirements = new List<IWikiNode>()
                 {
                     new ListNode(new List<IWikiNode>()
                     {
-                        new PageNode("Restless Ghost, The", "http://www.runehq.com/guide.php?type=quest&id=0173"),
-                        new PageNode("Ernest the Chicken", "http://www.runehq.com/guide.php?type=quest&id=0168"),
-                        new PageNode("Priest in Peril", "http://www.runehq.com/guide.php?type=quest&id=0373")
+                        new PageNode("Death to the Dorgeshuun", "http://www.runehq.com/guide.php?type=quest&id=0734"),
+                        new PageNode("Giant Dwarf, The", "http://www.runehq.com/guide.php?type=quest&id=0512"),
+                        new PageNode("Dig Site, The", "http://www.runehq.com/guide.php?type=quest&id=0354")
                     })
                 },
-                SkillRequirements = new List<IWikiNode>()
+            SkillRequirements = new List<IWikiNode>()
                 {
                     new ListNode(new List<IWikiNode>()
                     {
                         new GroupNode(
                             new TextNode("15"),
-                            new PageNode("Thieving", "http://www.runehq.com/guide.php?type=skill&id=312")    
+                            new PageNode("Attack", "http://www.runehq.com/guide.php?type=skill&id=561#attack")
                         ),
                         new GroupNode(
-                            new TextNode("18"),
-                            new PageNode("Slayer", "http://www.runehq.com/guide.php?type=skill&id=312")
-                        ),
-                        new GroupNode(
-                            new TextNode("19"),
-                            new PageNode("Crafting", "http://www.runehq.com/guide.php?type=skill&id=312")
-                        ),
-                        new GroupNode(
-                            new TextNode("30"),
-                            new PageNode("Ranged", "http://www.runehq.com/guide.php?type=skill&id=312")
-                        ),
-                        new GroupNode(
-                            new TextNode("35"),
-                            new PageNode("Woodcutting", "http://www.runehq.com/guide.php?type=skill&id=312")
+                            new TextNode("25"),
+                            new PageNode("Prayer", "http://www.runehq.com/guide.php?type=skill&id=295")
                         )
                     })
                 },
-                ItemsNeededAtStart = new List<IWikiNode>()
+            ItemsNeededAtStart = new List<IWikiNode>()
                 {
                     new ListNode(new List<IWikiNode>()
                     {
                         new TextNode("Light source (preferably a lantern)"),
                         new TextNode("Magic or Ranged attack method"),
                         new TextNode("Armor"),
-                        new TextNode("and a Weapon.")
+                        new TextNode("A Weapon.")
                     })
                 },
-                ItemsNeededToComplete = new List<IWikiNode>()
+            ItemsNeededToComplete = new List<IWikiNode>()
                 {
                     new ListNode(new List<IWikiNode>()
                     {
                         new TextNode("None.")
                     })
                 },
-                ItemsRecommended = new List<IWikiNode>()
+            ItemsRecommended = new List<IWikiNode>()
                 {
-                    new GroupNode(
-                        new PageNode("Dorgesh-kaan sphere", "http://www.runehq.com/database.php?type=item&id=3432"),
-                        new TextNode(".")
-                    )
+                    new ListNode(new List<IWikiNode>()
+                    {                       
+                        new TextNode("Dorgesh-kaan sphere.")
+                    })
                 },
-                QuestPoints = new List<IWikiNode>()
+            QuestPoints = new List<IWikiNode>()
                 {
                     new TextNode("1")
                 },
-                Reward = new List<IWikiNode>()
+            Reward = new List<IWikiNode>()
                 {
                     new ListNode(new List<IWikiNode>()
                     {
-                        new GroupNode(
-                            new TextNode("3K"),
-                            new PageNode("Mining", "http://www.runehq.com/guide.php?type=skill&id=337"),
-                            new TextNode("XP")
-                        ),
-                        new GroupNode(
-                            new TextNode("3K"),
-                            new PageNode("Prayer", "http://www.runehq.com/guide.php?type=skill&id=295"),
-                            new TextNode("XP")
-                        ),
-                        new PageNode("Ancient mace", "http://www.runehq.com/database.php?type=item&id=3494"),
-                        new GroupNode(
-                            new TextNode("access to the"),
-                            new PageNode("Dorgesh-Kaan", "http://www.runehq.com/guide.php?type=city&id=917"),
-                            new TextNode("-"),
-                            new PageNode("Keldagrim", "http://www.runehq.com/guide.php?type=city&id=521"),
-                            new TextNode("train service")
-                        ),
-                        new GroupNode(
-                            new TextNode("the ability to buy"),
-                            new PageNode("Goblin Village spheres", "http://www.runehq.com/database.php?type=item&id=25024"),
-                            new TextNode("from"),
-                            new PageNode("Oldak", "http://www.runehq.com/database.php?type=person&id=1411")
-                        ),
-                        new GroupNode(
-                            new TextNode("and 2"),
-                            new PageNode("Treasure Hunter", "http://www.runehq.com/guide.php?type=minigame&id=987"),
-                            new TextNode("keys.")
-                        )
+                         new TextNode("3K Mining XP"),
+                         new TextNode("3K Prayer XP"),
+                         new TextNode("Ancient mace"),
+                         new TextNode("Access to the Dorgesh-Kaan-Keldagrim train service"),
+                         new TextNode("The ability to buy Goblin Village spheres from Oldak"),
+                         new TextNode("2 Treasure Hunter keys.")
                     })
                 },
-                StartPoint = new List<IWikiNode>()
+            StartPoint = new List<IWikiNode>()
                 {
                     new GroupNode(
                         new TextNode("Ur-Tag's house in"),
@@ -122,7 +85,7 @@ namespace RunescapeQuestApi.Tests.Services
                         new TextNode(".")
                     )
                 },
-                ToStart = new List<IWikiNode>()
+            ToStart = new List<IWikiNode>()
                 {
                     new GroupNode(
                         new TextNode("Speak to either"),
@@ -132,8 +95,114 @@ namespace RunescapeQuestApi.Tests.Services
                         new TextNode(".")
                     )
                 }
-            };
-            var result = await new QuestLoader().LoadQuest("0875");
+        };
+        internal QuestFixture Fixture { get; set; }
+
+        public QuestLoaderTest(QuestFixture fixture)
+        {
+            Fixture = fixture;
+        }
+
+        [Fact]
+        public async Task QuestDifficultyIsParsed()
+        {
+            var expected = _quest.Difficulty;
+            var result = (await Fixture.LoadQuest()).Difficulty;
+
+            Assert.Equal(expected, result);
+        }
+
+        [Fact]
+        public async Task QuestLengthIsParsed()
+        {
+            var expected = _quest.Length;
+            var result = (await Fixture.LoadQuest()).Length;
+
+            Assert.Equal(expected, result);
+        }
+
+        [Fact]
+        public async Task QuestRequirementsAreParsed()
+        {
+            var expected = _quest.QuestRequirements.ToList();
+            var result = (await Fixture.LoadQuest()).QuestRequirements.ToList();
+
+            var foo = expected.SequenceEqual(result);
+
+            Assert.Equal(expected, result);
+        }
+
+        [Fact]
+        public async Task SkillRequirementsAreParsed()
+        {
+            var expected = _quest.SkillRequirements.ToList();
+            var result = (await Fixture.LoadQuest()).SkillRequirements.ToList();
+            var foo = expected.SequenceEqual(result);
+
+            Assert.Equal(expected, result);
+        }
+
+        [Fact]
+        public async Task ItemsNeededAtStartAreParsed()
+        {
+            var expected = _quest.ItemsNeededAtStart.ToList();
+            var result = (await Fixture.LoadQuest()).ItemsNeededAtStart.ToList();
+
+            Assert.Equal(expected, result);
+        }
+
+        [Fact]
+        public async Task ItemsNeededToCompleteAreParsed()
+        {
+            var expected = _quest.ItemsNeededToComplete;
+            var result = (await Fixture.LoadQuest()).ItemsNeededToComplete;
+
+            Assert.Equal(expected, result);
+        }
+
+        [Fact]
+        public async Task ItemsRecommendedAreParsed()
+        {
+            var expected = _quest.ItemsRecommended;
+            var result = (await Fixture.LoadQuest()).ItemsRecommended;
+
+            Assert.Equal(expected, result);
+        }
+
+        [Fact]
+        public async Task QuestPointsAreParsed()
+        {
+            var expected = _quest.ItemsNeededAtStart;
+            var result = (await Fixture.LoadQuest()).ItemsNeededAtStart;
+
+            Assert.Equal(expected, result);
+        }
+
+        [Fact]
+        public async Task RewardIsParsed()
+        {
+            var expected = _quest.Reward.ToList();
+            var result = (await Fixture.LoadQuest()).Reward.ToList();
+
+            Assert.Equal(expected, result);
+        }
+
+        [Fact]
+        public async Task StartPointIsParsed()
+        {
+            var expected = _quest.StartPoint.ToList();
+            var result = (await Fixture.LoadQuest()).StartPoint.ToList();
+
+            var foo = expected.SequenceEqual(result);
+
+            Assert.Equal(expected, result);
+        }
+
+        [Fact]
+        public async Task ToStartIsParsed()
+        {
+            var expected = _quest.ToStart.ToList();
+            var result = (await Fixture.LoadQuest()).ToStart.ToList();
 
             Assert.Equal(expected, result);
         }

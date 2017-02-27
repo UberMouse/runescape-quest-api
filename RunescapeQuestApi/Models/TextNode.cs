@@ -1,22 +1,17 @@
+using System.Runtime.Serialization;
+
 namespace RunescapeQuestApi.Models
 {
-    public class TextNode : IWikiNode
+    public class TextNode : BaseNode
     {
+        public override NodeType Type => NodeType.Text;
+        public override object Value => _text;
+
         private readonly string _text;
 
         public TextNode(string text)
         {
             _text = text;
-        }
-
-        public NodeType Type()
-        {
-            return NodeType.Text;
-        }
-
-        public object Value()
-        {
-            return _text;
         }
 
         protected bool Equals(TextNode other)
@@ -40,6 +35,6 @@ namespace RunescapeQuestApi.Models
         public override string ToString()
         {
             return $"TextNode({nameof(_text)}: {_text})";
-        }
+        }    
     }
 }

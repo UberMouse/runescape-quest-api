@@ -1,25 +1,19 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 
 namespace RunescapeQuestApi.Models
 {
-    public class ListNode : IWikiNode
+    public class ListNode : BaseNode
     {
-        private readonly List<IWikiNode> _children;
+        public override NodeType Type => NodeType.List;
+        public override object Value => _children;
 
-        public ListNode(List<IWikiNode> children)
+        private readonly List<BaseNode> _children;
+
+        public ListNode(List<BaseNode> children)
         {
             _children = children;
-        }
-
-        public NodeType Type()
-        {
-            return NodeType.List;
-        }
-
-        public object Value()
-        {
-            return _children;
         }
 
         protected bool Equals(ListNode other)

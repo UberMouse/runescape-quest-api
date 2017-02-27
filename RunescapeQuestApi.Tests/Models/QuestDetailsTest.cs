@@ -23,7 +23,7 @@ namespace RunescapeQuestApi.Tests.Models
         [Fact]
         public void StartPointReturnsAListOfNodesForTheStartPoint()
         {
-            var expected = new List<IWikiNode>
+            var expected = new List<BaseNode>
             {
                 new TextNode("Speak to"),
                 new PageNode("King Veldaban", "/wiki/King_Veldaban"),
@@ -53,7 +53,7 @@ namespace RunescapeQuestApi.Tests.Models
         [Fact]
         public void DifficultyReturnsAListOfNodesForDifficulty()
         {
-            var expected = new List<IWikiNode>
+            var expected = new List<BaseNode>
             {
                 new TextNode("Grandmaster")
             };
@@ -68,7 +68,7 @@ namespace RunescapeQuestApi.Tests.Models
         [Fact]
         public void LengthReturnsAListOfNodesForLength()
         {
-            var expected = new List<IWikiNode>
+            var expected = new List<BaseNode>
             {
                 new TextNode("Long (1-2 hours)")
             };

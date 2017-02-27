@@ -4,16 +4,16 @@ namespace RunescapeQuestApi.Models
 {
     public class Quest
     {
-        public IEnumerable<IWikiNode> Difficulty { get; set; }
-        public IEnumerable<IWikiNode> Length { get; set; }
-        public IEnumerable<IWikiNode> QuestRequirements { get; set; }
-        public IEnumerable<IWikiNode> SkillRequirements { get; set; }
-        public IEnumerable<IWikiNode> ItemsNeededAtStart { get; set; }
-        public IEnumerable<IWikiNode> ItemsNeededToComplete { get; set; }
-        public IEnumerable<IWikiNode> ItemsRecommended { get; set; }
-        public IEnumerable<IWikiNode> QuestPoints { get; set; }
-        public IEnumerable<IWikiNode> Reward { get; set; }
-        public IEnumerable<IWikiNode> StartPoint { get; set; }
-        public IEnumerable<IWikiNode> ToStart { get; set; }
+        public IEnumerable<BaseNode> Difficulty { get; set; }
+        public IEnumerable<BaseNode> Length { get; set; }
+        public IEnumerable<BaseNode> QuestRequirements { get; set; }
+        public IEnumerable<BaseNode> SkillRequirements { get; set; }
+        public IEnumerable<BaseNode> ItemsNeededAtStart { get; set; }
+        public IEnumerable<BaseNode> ItemsNeededToComplete { get; set; }
+        public IEnumerable<BaseNode> ItemsRecommended { get; set; }
+        public IEnumerable<BaseNode> QuestPoints { get; set; }
+        public IEnumerable<BaseNode> Reward { get; set; }
+        public IEnumerable<BaseNode> StartPoint { get; set; }
+        public IEnumerable<BaseNode> ToStart { get; set; }
     }
 }

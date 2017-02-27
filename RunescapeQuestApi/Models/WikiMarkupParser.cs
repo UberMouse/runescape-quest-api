@@ -6,22 +6,14 @@ using static AngleSharp.Dom.NodeType;
 
 namespace RunescapeQuestApi.Models
 {
-    public enum NodeType { Text, Page, List, Group }
-
-    public interface IWikiNode
-    {
-        NodeType Type();
-        object Value();
-    }
-
     public class WikiMarkupParser
     {
-        public IEnumerable<IWikiNode> Parse(INodeList nodes)
+        public IEnumerable<BaseNode> Parse(INodeList nodes)
         {
-            return nodes.Select(ConstructNode).OfType<IWikiNode>();
+            return nodes.Select(ConstructNode).OfType<BaseNode>();
         }
 
-        private IWikiNode ConstructNode(INode node)
+        private BaseNode ConstructNode(INode node)
         {
             switch (node.NodeType)
             {

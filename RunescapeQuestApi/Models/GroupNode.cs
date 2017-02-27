@@ -1,24 +1,18 @@
 ﻿using System.Linq;
+using System.Runtime.Serialization;
 
 namespace RunescapeQuestApi.Models
 {
-    public class GroupNode : IWikiNode
+    public class GroupNode : BaseNode
     {
-        private readonly IWikiNode[] _nodes;
+        public override NodeType Type => NodeType.Group;
+        public override object Value => _nodes;
 
-        public GroupNode(params IWikiNode[] nodes)
+        private readonly BaseNode[] _nodes;
+
+        public GroupNode(params BaseNode[] nodes)
         {
             _nodes = nodes;
-        }
-
-        public NodeType Type()
-        {
-            return NodeType.Group;
-        }
-
-        public object Value()
-        {
-            return _nodes;
         }
 
         protected bool Equals(GroupNode other)

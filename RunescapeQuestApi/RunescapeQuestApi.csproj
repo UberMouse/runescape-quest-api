@@ -166,7 +166,9 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\GroupNode.cs" />
+    <Compile Include="Models\BaseNode.cs" />
     <Compile Include="Models\ListNode.cs" />
+    <Compile Include="Models\NodeType.cs" />
     <Compile Include="Models\PageNode.cs" />
     <Compile Include="Models\Quest.cs" />
     <Compile Include="Models\QuestDetails.cs" />

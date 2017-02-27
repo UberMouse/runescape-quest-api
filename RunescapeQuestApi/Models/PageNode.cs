@@ -1,7 +1,16 @@
-﻿namespace RunescapeQuestApi.Models
+﻿using System.Runtime.Serialization;
+
+namespace RunescapeQuestApi.Models
 {
-    public class PageNode : IWikiNode
+    public class PageNode : BaseNode
     {
+        public override NodeType Type => NodeType.Page;
+        public override object Value => new
+        {
+            name = _name,
+            link = _link
+        };
+
         private readonly string _name;
         private readonly string _link;
 
@@ -9,20 +18,6 @@
         {
             _name = name;
             _link = link;
-        }
-
-        public NodeType Type()
-        {
-            return NodeType.Page;
-        }
-
-        public object Value()
-        {
-            return new
-            {
-                name = _name,
-                link = _link
-            };
         }
 
         protected bool Equals(PageNode other)

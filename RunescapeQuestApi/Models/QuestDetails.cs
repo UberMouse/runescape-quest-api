@@ -19,7 +19,7 @@ namespace RunescapeQuestApi.Models
             _parser = new WikiMarkupParser();
         }
 
-        public IEnumerable<IWikiNode> StartPoint()
+        public IEnumerable<BaseNode> StartPoint()
         {
             var startPoint = GetSection(Section.StartPoint);
 
@@ -40,14 +40,14 @@ namespace RunescapeQuestApi.Models
             return _details.QuerySelectorAll("tr")[(int) section].QuerySelector("td").ChildNodes;
         }
 
-        public IEnumerable<IWikiNode> Difficulty()
+        public IEnumerable<BaseNode> Difficulty()
         {
             var difficulty = GetSection(Section.Difficulty);
 
             return _parser.Parse(difficulty);
         }
 
-        public IEnumerable<IWikiNode> Length()
+        public IEnumerable<BaseNode> Length()
         {
             var length = GetSection(Section.Length);
 

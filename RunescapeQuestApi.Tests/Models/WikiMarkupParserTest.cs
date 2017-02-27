@@ -4,7 +4,7 @@ using AngleSharp.Dom;
 using AngleSharp.Parser.Html;
 using RunescapeQuestApi.Models;
 using Xunit;
-using INode = RunescapeQuestApi.Models.IWikiNode;
+using INode = RunescapeQuestApi.Models.BaseNode;
 
 namespace RunescapeQuestApi.Tests.Models
 {

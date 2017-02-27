@@ -1,17 +1,17 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using System.Web.Http;
+using RunescapeQuestApi.Models;
+using RunescapeQuestApi.Services;
 
 namespace RunescapeQuestApi.Controllers
 {
     public class ValuesController : ApiController
     {
         // GET api/values
-        public IEnumerable<string> Get()
+        public async Task<Quest> Get()
         {
-            //            var quest = await new QuestLoader().LoadQuest("Beneath_Cursed_Tides");
-            //            var requirements = quest.Requirements();
-
-            return new string[] { "value1", "value2" };
+            return await new QuestLoader().LoadQuest("0875");
         }
 
         // GET api/values/5

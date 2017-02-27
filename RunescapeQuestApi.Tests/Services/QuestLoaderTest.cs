@@ -12,20 +12,20 @@ namespace RunescapeQuestApi.Tests.Services
     {
         internal Quest _quest = new Quest()
         {
-            Difficulty = new List<IWikiNode>() { new GroupNode(new TextNode("Intermediate")) },
-            Length = new List<IWikiNode>() { new GroupNode(new TextNode("Medium")) },
-            QuestRequirements = new List<IWikiNode>()
+            Difficulty = new List<BaseNode>() { new GroupNode(new TextNode("Intermediate")) },
+            Length = new List<BaseNode>() { new GroupNode(new TextNode("Medium")) },
+            QuestRequirements = new List<BaseNode>()
                 {
-                    new ListNode(new List<IWikiNode>()
+                    new ListNode(new List<BaseNode>()
                     {
                         new PageNode("Death to the Dorgeshuun", "http://www.runehq.com/guide.php?type=quest&id=0734"),
                         new PageNode("Giant Dwarf, The", "http://www.runehq.com/guide.php?type=quest&id=0512"),
                         new PageNode("Dig Site, The", "http://www.runehq.com/guide.php?type=quest&id=0354")
                     })
                 },
-            SkillRequirements = new List<IWikiNode>()
+            SkillRequirements = new List<BaseNode>()
                 {
-                    new ListNode(new List<IWikiNode>()
+                    new ListNode(new List<BaseNode>()
                     {
                         new GroupNode(
                             new TextNode("15"),
@@ -37,9 +37,9 @@ namespace RunescapeQuestApi.Tests.Services
                         )
                     })
                 },
-            ItemsNeededAtStart = new List<IWikiNode>()
+            ItemsNeededAtStart = new List<BaseNode>()
                 {
-                    new ListNode(new List<IWikiNode>()
+                    new ListNode(new List<BaseNode>()
                     {
                         new TextNode("Light source (preferably a lantern)"),
                         new TextNode("Magic or Ranged attack method"),
@@ -47,27 +47,27 @@ namespace RunescapeQuestApi.Tests.Services
                         new TextNode("A Weapon.")
                     })
                 },
-            ItemsNeededToComplete = new List<IWikiNode>()
+            ItemsNeededToComplete = new List<BaseNode>()
                 {
-                    new ListNode(new List<IWikiNode>()
+                    new ListNode(new List<BaseNode>()
                     {
                         new TextNode("None.")
                     })
                 },
-            ItemsRecommended = new List<IWikiNode>()
+            ItemsRecommended = new List<BaseNode>()
                 {
-                    new ListNode(new List<IWikiNode>()
+                    new ListNode(new List<BaseNode>()
                     {                       
                         new TextNode("Dorgesh-kaan sphere.")
                     })
                 },
-            QuestPoints = new List<IWikiNode>()
+            QuestPoints = new List<BaseNode>()
                 {
                     new TextNode("1")
                 },
-            Reward = new List<IWikiNode>()
+            Reward = new List<BaseNode>()
                 {
-                    new ListNode(new List<IWikiNode>()
+                    new ListNode(new List<BaseNode>()
                     {
                          new TextNode("3K Mining XP"),
                          new TextNode("3K Prayer XP"),
@@ -77,7 +77,7 @@ namespace RunescapeQuestApi.Tests.Services
                          new TextNode("2 Treasure Hunter keys.")
                     })
                 },
-            StartPoint = new List<IWikiNode>()
+            StartPoint = new List<BaseNode>()
                 {
                     new GroupNode(
                         new TextNode("Ur-Tag's house in"),
@@ -85,7 +85,7 @@ namespace RunescapeQuestApi.Tests.Services
                         new TextNode(".")
                     )
                 },
-            ToStart = new List<IWikiNode>()
+            ToStart = new List<BaseNode>()
                 {
                     new GroupNode(
                         new TextNode("Speak to either"),

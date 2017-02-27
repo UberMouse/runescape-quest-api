@@ -32,7 +32,7 @@ namespace RunescapeQuestApi.Services
             { "To Start:", "ToStart" },    
         };
 
-        private readonly Dictionary<string, Func<IHtmlElement, IEnumerable<IWikiNode>>> _sectionParseStrategies = new Dictionary<string, Func<IHtmlElement, IEnumerable<IWikiNode>>>()
+        private readonly Dictionary<string, Func<IHtmlElement, IEnumerable<BaseNode>>> _sectionParseStrategies = new Dictionary<string, Func<IHtmlElement, IEnumerable<BaseNode>>>()
         {
             {"Difficulty", GroupParser},
             {"Length",  GroupParser},
@@ -47,12 +47,12 @@ namespace RunescapeQuestApi.Services
             {"ToStart", GroupParser}
         };
 
-        private static IEnumerable<IWikiNode> GroupParser(IHtmlElement element)
+        private static IEnumerable<BaseNode> GroupParser(IHtmlElement element)
         {
-            return new List<IWikiNode>()
+            return new List<BaseNode>()
             {
                 new GroupNode(
-                    element.ChildNodes.Select<INode, IWikiNode>(node =>
+                    element.ChildNodes.Select<INode, BaseNode>(node =>
                     {
                         var anchorNode = node as IHtmlAnchorElement;
                         if (anchorNode != null)
@@ -64,7 +64,7 @@ namespace RunescapeQuestApi.Services
             };
         }
 
-        private static IEnumerable<IWikiNode> ListParser(IHtmlElement element)
+        private static IEnumerable<BaseNode> ListParser(IHtmlElement element)
         {
             var textCleanupActions = new List<Func<string, string>>()
             {
@@ -82,16 +82,16 @@ namespace RunescapeQuestApi.Services
                 .Split(',')
                 .Select(item => item.Trim())
                 .Select(item => new TextNode(textCleanupActions.Aggregate(item, (text, transform) => transform(text))))
-                .OfType<IWikiNode>()
+                .OfType<BaseNode>()
                 .ToList();
 
-            return new List<IWikiNode>()
+            return new List<BaseNode>()
             {
                 new ListNode(textNodes)
             };
         }
 
-        private static IEnumerable<IWikiNode> SkillRequirements(IHtmlElement element)
+        private static IEnumerable<BaseNode> SkillRequirements(IHtmlElement element)
         {
             var skillNodes = Split(
                 element
@@ -108,7 +108,7 @@ namespace RunescapeQuestApi.Services
                 size: 2
             );
 
-            return new List<IWikiNode>()
+            return new List<BaseNode>()
             {
                 new ListNode(
                     skillNodes
@@ -123,13 +123,13 @@ namespace RunescapeQuestApi.Services
                             new TextNode(group.Text.TextContent.Trim()),
                             new PageNode(group.Anchor.Text, group.Anchor.Href)
                         ))
-                        .OfType<IWikiNode>()
+                        .OfType<BaseNode>()
                         .ToList()
                )
             };
         }
 
-        private static IEnumerable<IWikiNode> QuestRequirements(IHtmlElement element)
+        private static IEnumerable<BaseNode> QuestRequirements(IHtmlElement element)
         {
             var questNodes = element
                 .ChildNodes
@@ -138,9 +138,9 @@ namespace RunescapeQuestApi.Services
                 .OfType<IHtmlAnchorElement>()
                 .Select(node => new PageNode(node.TextContent.Trim(), node.Href));
 
-            return new List<IWikiNode>()
+            return new List<BaseNode>()
             {
-                new ListNode(questNodes.OfType<IWikiNode>().ToList())
+                new ListNode(questNodes.OfType<BaseNode>().ToList())
             };
         }
 

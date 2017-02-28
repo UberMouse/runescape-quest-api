@@ -1,5 +1,3 @@
-using System;
-
 namespace RunescapeQuestApi.Models
 {
     public class NodeType

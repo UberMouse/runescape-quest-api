@@ -1,9 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using AngleSharp.Dom.Css;
 using RunescapeQuestApi.Models;
-using RunescapeQuestApi.Services;
 using Xunit;
 
 namespace RunescapeQuestApi.Tests.Services
@@ -127,8 +125,6 @@ namespace RunescapeQuestApi.Tests.Services
             var expected = _quest.QuestRequirements.ToList();
             var result = (await Fixture.LoadQuest()).QuestRequirements.ToList();
 
-            var foo = expected.SequenceEqual(result);
-
             Assert.Equal(expected, result);
         }
 
@@ -137,7 +133,6 @@ namespace RunescapeQuestApi.Tests.Services
         {
             var expected = _quest.SkillRequirements.ToList();
             var result = (await Fixture.LoadQuest()).SkillRequirements.ToList();
-            var foo = expected.SequenceEqual(result);
 
             Assert.Equal(expected, result);
         }
@@ -192,8 +187,6 @@ namespace RunescapeQuestApi.Tests.Services
         {
             var expected = _quest.StartPoint.ToList();
             var result = (await Fixture.LoadQuest()).StartPoint.ToList();
-
-            var foo = expected.SequenceEqual(result);
 
             Assert.Equal(expected, result);
         }

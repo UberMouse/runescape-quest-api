@@ -1,5 +1,3 @@
-using System.Runtime.Serialization;
-
 namespace RunescapeQuestApi.Models
 {
     public class TextNode : BaseNode

@@ -16,4 +16,10 @@ namespace RunescapeQuestApi.Models
         public IEnumerable<BaseNode> StartPoint { get; set; }
         public IEnumerable<BaseNode> ToStart { get; set; }
     }
+
+    public class PartialQuest
+    {
+        public string Name { get; set; }
+        public string Id { get; set; }
+    }
 }

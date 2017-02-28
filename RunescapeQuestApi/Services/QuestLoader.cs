@@ -1,23 +1,26 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing.Drawing2D;
 using System.Linq;
-using System.Reflection;
 using System.Threading.Tasks;
-using System.Web.WebSockets;
 using AngleSharp;
 using AngleSharp.Dom;
-using AngleSharp.Dom.Css;
 using AngleSharp.Dom.Html;
-using AngleSharp.Html;
 using RunescapeQuestApi.Models;
 using WebGrease.Css.Extensions;
+using RunescapeQuestApi.Extensions;
 
 namespace RunescapeQuestApi.Services
 {
     public class QuestLoader
     {
-        private readonly Dictionary<string, string> headerMapping = new Dictionary<string, string>()
+        private readonly IBrowsingContext _browsingContext;
+
+        public QuestLoader(IBrowsingContext browsingContext = null)
+        {
+            _browsingContext = browsingContext ?? BrowsingContext.New(Configuration.Default.WithDefaultLoader());
+        }
+
+        private readonly Dictionary<string, string> _headerMapping = new Dictionary<string, string>()
         {
             { "Difficulty:", "Difficulty" },
             { "Length:", "Length" },
@@ -34,125 +37,42 @@ namespace RunescapeQuestApi.Services
 
         private readonly Dictionary<string, Func<IHtmlElement, IEnumerable<BaseNode>>> _sectionParseStrategies = new Dictionary<string, Func<IHtmlElement, IEnumerable<BaseNode>>>()
         {
-            {"Difficulty", GroupParser},
-            {"Length",  GroupParser},
-            {"QuestRequirements", QuestRequirements},
-            {"SkillRequirements", SkillRequirements},
-            {"ItemsNeededAtStart", ListParser},
-            {"ItemsNeededToComplete", ListParser},
-            {"ItemsRecommended", ListParser },
-            {"QuestPoints", GroupParser},
-            {"Reward", ListParser},
-            {"StartPoint", GroupParser},
-            {"ToStart", GroupParser}
+            {"Difficulty", Parsers.GroupParser},
+            {"Length", Parsers.GroupParser},
+            {"QuestRequirements", Parsers.QuestRequirements},
+            {"SkillRequirements", Parsers.SkillRequirements},
+            {"ItemsNeededAtStart", Parsers.ListParser},
+            {"ItemsNeededToComplete", Parsers.ListParser},
+            {"ItemsRecommended", Parsers.ListParser },
+            {"QuestPoints", Parsers.GroupParser},
+            {"Reward", Parsers.ListParser},
+            {"StartPoint", Parsers.GroupParser},
+            {"ToStart", Parsers.GroupParser}
         };
-
-        private static IEnumerable<BaseNode> GroupParser(IHtmlElement element)
-        {
-            return new List<BaseNode>()
-            {
-                new GroupNode(
-                    element.ChildNodes.Select<INode, BaseNode>(node =>
-                    {
-                        var anchorNode = node as IHtmlAnchorElement;
-                        if (anchorNode != null)
-                            return new PageNode(anchorNode.Text, anchorNode.Href);
-
-                        return new TextNode(node.TextContent.Trim());
-                    }).ToArray()    
-                )
-            };
-        }
-
-        private static IEnumerable<BaseNode> ListParser(IHtmlElement element)
-        {
-            var textCleanupActions = new List<Func<string, string>>()
-            {
-                text =>
-                {
-                    if (text.StartsWith("and", StringComparison.CurrentCultureIgnoreCase))
-                        return text.TrimStart('a', 'n', 'd').Trim();
-                    return text;
-                },
-                text => text.First().ToString().ToUpper() + text.Substring(1)
-            };
-
-            var content = element.TextContent;
-            var textNodes = content
-                .Split(',')
-                .Select(item => item.Trim())
-                .Select(item => new TextNode(textCleanupActions.Aggregate(item, (text, transform) => transform(text))))
-                .OfType<BaseNode>()
-                .ToList();
-
-            return new List<BaseNode>()
-            {
-                new ListNode(textNodes)
-            };
-        }
-
-        private static IEnumerable<BaseNode> SkillRequirements(IHtmlElement element)
-        {
-            var skillNodes = Split(
-                element
-                    .ChildNodes
-                    .Where(node =>
-                    {
-                        var castNode = node as IHtmlElement;
-                        // Free floating text is not part of the DOM namespace so it won't cast
-                        if (castNode == null)
-                            return true;
-
-                        return castNode.TagName != "BR";
-                    }),
-                size: 2
-            );
-
-            return new List<BaseNode>()
-            {
-                new ListNode(
-                    skillNodes
-                        .Where(group => group.Count() == 2)
-                        // All legitimate groups will be a TextNode and HtmlAnchorElement, this filters out the junk ones
-                        .Select(group =>
-                        {
-                            var elements = group.ToList();
-
-                            return new {Text = elements.First(), Anchor = (IHtmlAnchorElement) elements.Last()};
-                        }).Select(group => new GroupNode(
-                            new TextNode(group.Text.TextContent.Trim()),
-                            new PageNode(group.Anchor.Text, group.Anchor.Href)
-                        ))
-                        .OfType<BaseNode>()
-                        .ToList()
-               )
-            };
-        }
-
-        private static IEnumerable<BaseNode> QuestRequirements(IHtmlElement element)
-        {
-            var questNodes = element
-                .ChildNodes
-                .OfType<IHtmlElement>()
-                .Where(node => node.LocalName == "a")
-                .OfType<IHtmlAnchorElement>()
-                .Select(node => new PageNode(node.TextContent.Trim(), node.Href));
-
-            return new List<BaseNode>()
-            {
-                new ListNode(questNodes.OfType<BaseNode>().ToList())
-            };
-        }
 
         public async Task<Quest> LoadQuest(string id)
         {
-            var config = Configuration.Default.WithDefaultLoader();
             var address = "http://www.runehq.com/guide.php?type=quest&id=" + id;
-            var document = await BrowsingContext.New(config).OpenAsync(address);
+            var document = await _browsingContext.OpenAsync(address);
 
-            var questContent = document.QuerySelectorAll(".content-body")[1];
+            var questContent = document.QuerySelectorAll(".content-body")[0];
 
             return ParseQuest((IHtmlElement) questContent);
+        }
+
+        public async Task<IEnumerable<PartialQuest>> LoadQuests()
+        {
+            var address = "http://www.runehq.com/quest";
+            var document = await _browsingContext.OpenAsync(address);
+
+            var quests = document.QuerySelectorAll("#guideList tr");
+
+            return ParseQuests(quests);
+        }
+
+        private IEnumerable<PartialQuest> ParseQuests(IHtmlCollection<IElement> quests)
+        {
+            return null;
         }
 
         private Quest ParseQuest(IHtmlElement questContent)
@@ -161,43 +81,28 @@ namespace RunescapeQuestApi.Services
             var questProperties = quest.GetType()
                                        .GetProperties()
                                        .ToDictionary(pi => pi.Name);
-            Split(
-                questContent.ChildNodes.OfType<IHtmlElement>(), 
-                size: 2
-            ).Select(group =>
-            {
-                var elements = group.ToList();
+            questContent
+                .ChildNodes
+                .OfType<IHtmlElement>()
+                .Split(size: 2)
+                .Select(group =>
+                {
+                    var elements = group.ToList();
 
-                return new {Heading = elements.First().TextContent, Content = elements.Last()};
-            })
-            .ForEach(section =>
-            {
-                if (!headerMapping.ContainsKey(section.Heading))
-                    return;
+                    return new {Heading = elements.First().TextContent.Trim(), Content = elements.Last()};
+                })
+                .ForEach(section =>
+                {
+                    if (!_headerMapping.ContainsKey(section.Heading))
+                        return;
 
-                var name = headerMapping[section.Heading];
+                    var name = _headerMapping[section.Heading];
 
-                if (_sectionParseStrategies.ContainsKey(name)) 
-                    questProperties[name].SetValue(quest, _sectionParseStrategies[name](section.Content));             
-             });
+                    if (_sectionParseStrategies.ContainsKey(name))
+                        questProperties[name].SetValue(quest, _sectionParseStrategies[name](section.Content));
+                });
 
             return quest;
-        }
-
-        /// <summary>
-        /// Splits an array into several smaller arrays.
-        /// </summary>
-        /// <typeparam name="T">The type of the enumerable.</typeparam>
-        /// <param name="enumerable">The enumerable to split.</param>
-        /// <param name="size">The size of the smaller arrays.</param>
-        /// <returns>An array containing smaller arrays.</returns>
-        private static IEnumerable<IEnumerable<T>> Split<T>(IEnumerable<T> enumerable, int size)
-        {
-            var array = enumerable as T[] ?? enumerable.ToArray();
-            for (var i = 0; i < (float)array.Count() / size; i++)
-            {
-                yield return array.Skip(i * size).Take(size);
-            }
         }
     }
 }

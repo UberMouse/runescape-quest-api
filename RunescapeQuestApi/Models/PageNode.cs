@@ -1,6 +1,4 @@
-﻿using System.Runtime.Serialization;
-
-namespace RunescapeQuestApi.Models
+﻿namespace RunescapeQuestApi.Models
 {
     public class PageNode : BaseNode
     {

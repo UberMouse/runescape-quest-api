@@ -24,7 +24,7 @@ namespace RunescapeQuestApi.Tests.Services
         }
         public async Task<Quest> LoadQuest()
         {
-            var quest = await _loader.LoadQuest("08755");
+            var quest = await _loader.LoadQuest("0875");
        
             return quest;
         }
@@ -46,7 +46,7 @@ namespace RunescapeQuestApi.Tests.Services
 
         public Task<IResponse> RequestAsync(IRequest request, CancellationToken cancel)
         {
-            var file = request.Address.Path.Contains("quests") ? "quests.html" : "quest.html";
+            var file = request.Address.Path.Contains("guide") ? "quest.html" : "quests.html";
             var stream = File.Open($"Services/{file}", FileMode.Open);
             var response = new Response()
             {

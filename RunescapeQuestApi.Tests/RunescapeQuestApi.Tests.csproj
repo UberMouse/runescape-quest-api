@@ -125,7 +125,8 @@
     <Compile Include="Controllers\HomeControllerTest.cs" />
     <Compile Include="Controllers\ValuesControllerTest.cs" />
     <Compile Include="Services\QuestFixture.cs" />
-    <Compile Include="Services\QuestLoaderTest.cs" />
+    <Compile Include="Services\QuestLoader.LoadQuestsTest.cs" />
+    <Compile Include="Services\QuestLoader.LoadQuestTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="App.config" />

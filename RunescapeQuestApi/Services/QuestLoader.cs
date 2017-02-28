@@ -62,17 +62,30 @@ namespace RunescapeQuestApi.Services
 
         public async Task<IEnumerable<PartialQuest>> LoadQuests()
         {
-            var address = "http://www.runehq.com/quest";
+            var address = "http://www.runehq.com/quests";
             var document = await _browsingContext.OpenAsync(address);
 
-            var quests = document.QuerySelectorAll("#guideList tr");
+            var quests = document.QuerySelectorAll("#guideList tbody tr");
 
             return ParseQuests(quests);
         }
 
         private IEnumerable<PartialQuest> ParseQuests(IHtmlCollection<IElement> quests)
         {
-            return null;
+            return quests
+                .OfType<IHtmlTableRowElement>()
+                .Select(row =>
+                {
+                    var questLink = row
+                        .Children
+                        .First()
+                        .Children
+                        .OfType<IHtmlAnchorElement>()
+                        .First();
+
+                    // Href looks like http://www.runehq.com/guide.php?type=quest&id=whatwewant
+                    return new PartialQuest() {Name = questLink.Text, Id = questLink.Href.Split('=').Last()};
+                });
         }
 
         private Quest ParseQuest(IHtmlElement questContent)

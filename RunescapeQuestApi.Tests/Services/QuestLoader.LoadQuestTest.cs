@@ -6,7 +6,7 @@ using Xunit;
 
 namespace RunescapeQuestApi.Tests.Services
 {
-    public class QuestLoaderTest : IClassFixture<QuestFixture>
+    public class QuestLoaderLoadQuestTest : IClassFixture<QuestFixture>
     {
         internal Quest _quest = new Quest()
         {
@@ -96,7 +96,7 @@ namespace RunescapeQuestApi.Tests.Services
         };
         internal QuestFixture Fixture { get; set; }
 
-        public QuestLoaderTest(QuestFixture fixture)
+        public QuestLoaderLoadQuestTest(QuestFixture fixture)
         {
             Fixture = fixture;
         }

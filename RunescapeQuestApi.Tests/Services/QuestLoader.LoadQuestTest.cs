@@ -8,7 +8,7 @@ namespace RunescapeQuestApi.Tests.Services
 {
     public class QuestLoaderLoadQuestTest : IClassFixture<QuestFixture>
     {
-        internal Quest _quest = new Quest()
+        private Quest _quest = new Quest()
         {
             Difficulty = new List<BaseNode>() { new GroupNode(new TextNode("Intermediate")) },
             Length = new List<BaseNode>() { new GroupNode(new TextNode("Medium")) },

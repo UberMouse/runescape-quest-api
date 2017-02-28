@@ -55,14 +55,14 @@ namespace RunescapeQuestApi.Services
             var address = "http://www.runehq.com/guide.php?type=quest&id=" + id;
             var document = await _browsingContext.OpenAsync(address);
 
-            var questContent = document.QuerySelectorAll(".content-body")[0];
+            var questContent = document.QuerySelectorAll(".content-body")[1];
 
             return ParseQuest((IHtmlElement) questContent);
         }
 
         public async Task<IEnumerable<PartialQuest>> LoadQuests()
         {
-            var address = "http://www.runehq.com/quests";
+            var address = "http://www.runehq.com/quest";
             var document = await _browsingContext.OpenAsync(address);
 
             var quests = document.QuerySelectorAll("#guideList tbody tr");
